@@ -85,3 +85,28 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 FHIR&reg; is the registered trademark of HL7 and is used with the permission of HL7. 
 
+## Adding US-Core Pofiling Features
+This part is intended to describe the process to generate us-core profiling standard data and how to post these definitions to Fhir-work-on-Azure.
+   
+* Go to this link if you want to build and test the project locally. https://github.com/microsoft/fhir-server/wiki/Build-and-debug-locally
+* If you want to get more details about CMS Interoperability and Patient Access rule, go to this link: https://docs.microsoft.com/en-us/azure/healthcare-apis/fhir/centers-for-medicare-tutorial-introduction
+
+How to use Visual Studio Code's REST Client extension to run manual test scenarios:
+Visual Studio Code's REST Client extension can be used to manually test a sequence of API calls against a locally running FHIR server. This folder is a space where developers can summarize their test scenarios to share with others. Here are steps to use the extension and run the test files in this folder:
+1. Install Visual Studio Code
+2. Add the REST Client extension in the Extensions tab in Visual Studio Code or install it here
+3. Navigate to the docs\rest folder, open the USCore.http test file you would like to use in Visual Studio Code. US-Core structure definition resources stores in docs\rest\PayerDataExchange\US_Core_Profiles
+4. In the USCore.http file, change the value of fhirurl, clientid, clientsecret and tenantid.
+5. Get access token and change the value of @token in line 26. reference https://docs.microsoft.com/en-us/azure/healthcare-apis/azure-api-for-fhir/get-healthcare-apis-access-token-cli
+6. select from line 31 and below. right click and select "request". All the structure definitions resources should be posted to api
+
+Accoring to current default deployment, transaction is currently not supported on CosmosDB.  
+If you want to use a transaction bundle, you can use the SQL FHIR Server, otherwise you will need to use a Batch Bundle.
+Currently, the bundle size limit in Fhir-work-on-Azure is 500.
+And at the same time, Synthea only supports transaction and collection bundle data.
+
+1. Generate data in Synthea with --exporter.fhir.use_us_core_ig true --exporter.fhir.transaction_bundle true
+2. Open and change the generated json file, change type from "transaction" to "batch"
+3. post the bunlde to the api root, it should respond 200 without error if the enties in the data is less than 500.
+ 
+
